@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="en-UK" dir="ltr">
+<head>
+  <meta charset="UTF-64">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EclipseTS.tiiny.site</title>
+  <link href="css/styles.css" rel="stylesheet"></style>
+</head>
+<body>
+  <div id="title-screen"><h1>Eclipse</h1>
+    <button id="start-button">Start Game</button>
+  </div>
+  
+  <div id="game"><div class="game-container">
+    <div id="coordinate-system"><div id="grid">
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+      <div class="cell" data-index="9"></div>
+    </div><div id="point"></div></div>
+    
+    <div class="parent" style="width: 80%;">
+      <div id="coordinates-describe"></div>
+      <div id="loots" class="" style="display: block;
+        min-width: 80% max-width: 100%">
+        <h1>Loots</h1><div id="lootItems"></div></div>
+    </div>
+    
+    <input type="button" id="help-button" value="Help">
+    <div id="help-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" id="help-close-button">&#215;</span>
+        <h2>Game Help</h2>
+        <p>Welcome to the game!</p>
+        <p>Here are some controls and tips:</p><ul>
+          <li><strong>[ W ]</strong>: Move Up</li>
+          <li><strong>[ A ]</strong>: Move Left</li>
+          <li><strong>[ S ]</strong>: Move Down</li>
+          <li><strong>[ D ]</strong>: Move Right</li>
+          <li>Click on the grid to interact with the environment.</li>
+          <li>Check your inventory by clicking on <strong>[ Inventory ]</strong>.</li>
+          <li>Keep an eye on your health bar!</li>
+          <li>Optional: Use a .bake text file to import your previous, saved world.</li>
+      </ul></div></div>
+
+      <div id="controls"><div class="dpad">
+        <input type="button" value="W">
+        <div><input type="button" value="A">
+        <input type="button" value="D">
+      </div><input type="button" value="S">
+      </div></div>
+      
+      <div class="button-container">
+        <button id="toggleBox">Inventory</button>
+      </div><div class="button-container">
+        <button id="download">Export Game State (Beta)</button>
+      </div><div class="container">
+      
+      <div id="user-box">
+        <span class="close-button" id="userbox-close-button">&times;</span>
+        <div id="user-description">
+          <h2>Player Description</h2>
+          <p>Name: $name </p>
+          <p>Race: Human </p>
+          <div class="exp-container"><div class="exp-bar"></div></div>
+          <div class="hp-container"><div class="hp-bar"></div></div>
+          </div>
+          <div id="playerStats"> <strong>Player Stats : </strong>
+            <li id="ATKStats"></li><li id="DEFStats"></li>
+          </div><details>
+          <summary><strong>Equipment Dropdown</strong></summary>
+            <div class="grid-container" id="player-equipment">
+              <p><strong>Weapon</strong></p><button id="player-weapon" class="equipment">None</button>
+              <p><strong>Head</strong></p><button id="player-head" class="equipment">None</button>
+              <p><strong>Body</strong></p><button id="player-body" class="equipment">None</button>
+              <p><strong>Legs</strong></p><button id="player-legs" class="equipment">None</button>
+            </div></details>
+          <div class="parent border-curl"
+            style="overflow-y: auto; border: 1px solid #604D35;
+              padding: 10px; background-color: #C19A6B;">
+            <h3>Items</h3>
+            <div id="items-contained">
+        </div></div></div>
+        
+       <div class="parent fit-nice" style="text-align: center; width: 80%">
+        <textarea rows="13" cols="28" id="import-world"></textarea>
+        <div><button id="submit-import">Submit</button></div>
+        <label for="fileInput" style="background-color: #FFF; margin-top: 13px; 
+        ">Select a text/bake file to be read:</label>
+        <input type="file" id="fileInput" />
+        <button id="confirmBtn" style="width: 100%" disabled>Confirm and Log File</button>
+        <p class="instructions">Select a file, then click the button to import the world state.</p>
+        </div></div>
+  </div></div></div>
+  
+  <div id="enemy-container">
+    <div class="enemy">
+      <h2>Enemy: $Monster</h2>
+      <p id="enemy-level">Level $level</p>
+      <div id="health-bar-enemy" style="border: 1px solid #000">
+        <div id="health-enemy"></div></div>
+      <p id="health-text">Health: 100/100</p></div>
+      <div id="battle-actions">
+      <button id="attack-btn">Attack</button>
+      <button id="flee-btn">Flee</button></div>
+      <div id="message-battle"></div></div>
+  <div id="death"><h1>Game Over</h1></div>
+  </body>
+</html>
+
+<script src="js/module.js" async></script>
+<script src="js/script.js" async></script>
