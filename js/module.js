@@ -119,6 +119,5 @@ async function loadImage(link, name, address)
 };
 
 const imageUrl =
-{ Sprite$0: "https://raw.githubusercontent.com/"
-  + "thefurthermore818-dot/ec-assets/refs/heads/main/1.png" };
+{ Sprite$0: "https://raw.githubusercontent.com/thefurthermore818-dot/ec-assets/refs/heads/main/img/icon/Heart.png" };
 loadImage(imageUrl.Sprite$0, "Sprite$0", ".enemy");
