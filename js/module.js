@@ -106,6 +106,7 @@ async function loadImage(link, name, address)
         globalThis[`${name}`] = base64String;
         const Image = document.createElement('img');
               Image.src = globalThis[`${name}`];
+              Image.alt = name;
         document.querySelector(address).appendChild(Image);
         Image.style.maxWidth = "100%";
       }
