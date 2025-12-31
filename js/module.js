@@ -63,62 +63,77 @@ const OuroborosModule = {
 
 
 
-const TIMEOUT_MS = 600 * 1000;
-async function fetchImageAsBase64(imageUrl)
-{
+const TIMEOUT_MS = 60 * 1000;
+let ObjectImageDictionary = {};
+
+async function fetchImageAsBase64(imageUrl) {
   const controller = new AbortController();
   const signal = controller.signal;
   const timeoutId = setTimeout(() => {
     controller.abort();
   }, TIMEOUT_MS);
 
-  try
-  { const response = await fetch(imageUrl, { signal });
+  try {
+    const response = await fetch(imageUrl, { signal });
     clearTimeout(timeoutId);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) =>
-    {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    } const blob = await response.blob();
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
             reader.onloadend = () => resolve(reader.result);
             reader.onerror = reject;
             reader.readAsDataURL(blob);
     });
-  } catch (error) {
+  }
+  catch (error) {
     clearTimeout(timeoutId);
     if (error.name === 'AbortError') {
       console.warn("Image takes too long (Aborted).");
-      // Re-throw or handle as a custom error for the caller
-      throw new Error("Image takes too long.");
-    }
-    
-    // Handle other errors (network issues, etc.)
-    console.warn("An error occurred during fetch:", error);
-    return null; 
+        throw new Error("Image takes too long.");
+    } console.warn("An error occurred during fetch:", error);
+    throw error;
   }
 }
 
-async function loadImage(link, name, address)
-{ return new Promise((resolve, reject) => {
-    fetchImageAsBase64(link).then(base64String =>
-    { if (base64String)
-      { console.log("Image as Base64 string:",
-          base64String.substring(0, 50) + "...");
-        globalThis[`${name}`] = base64String;
-        const Image = document.createElement('img');
-              Image.src = globalThis[`${name}`];
-              Image.alt = name;
-        document.querySelector(address).appendChild(Image);
-        Image.style.maxWidth = "100%";
-      }
+async function loadImage(link, style, init, onload) {
+  return new Promise((resolve, reject) => {
+    fetchImageAsBase64(link).then(base64String => {
+      if (base64String) { console.log("Image as Base64 string:"
+        + base64String.substring(0, 50) + "...");
+        const img = document.createElement('img');
+              img.src = base64String; img.id = init;
+        Object.entries(style).forEach(([k, v]) => { img.style[k] = v; });
+        ObjectImageDictionary[init] = img;
+        onload(); resolve(img);
+      } else { reject(new Error("Failed to convert image to Base64.")); }
     }).catch(error =>
-    {
-      if (error && error.message === "Image takes too long.")
+    { if (error && error.message === "Image takes too long.")
       { console.warn("Image processing cancelled: Image takes too long."); }
       else if (error) { console.warn("An unhandled error occurred:", error.message); }
+      reject(error);
     });
   });
 };
 
-const imageUrl =
-{ Sprite$0: "https://raw.githubusercontent.com/thefurthermore818-dot/ec-assets/refs/heads/main/img/icon/Heart.png" };
-loadImage(imageUrl.Sprite$0, "Sprite$0", ".enemy");
+
+const imageUrl = { Sprite$0: "https://i.postimg.cc/mkqX8ZcJ/Sprite$0.png" };
+
+let Sprite$0 = loadImage(imageUrl.Sprite$0,
+  {
+    'height': '256px',
+    'width': 'auto',
+    'image-rendering': 'pixelated',
+  }, 'Sprite$0', () =>
+    { const enemyElement = document.getElementById('enemy');
+      const imageElement = ObjectImageDictionary.Sprite$0;
+      if (enemyElement && imageElement) {
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.append(imageElement); // Put the image inside the new div
+        enemyElement.append(wrapperDiv); // Put the new div inside the 'enemy' element
+      }
+      imageElement.parentElement.style.backgroundColor = '#0F08';
+      imageElement.parentElement.style.border = '2px solid #604D35';
+      imageElement.parentElement.style.borderRadius = '6px';
+    }
+);
