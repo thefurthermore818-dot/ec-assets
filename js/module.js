@@ -117,8 +117,7 @@ async function loadImage(link, style, init, onload) {
 };
 
 
-const imageUrl = { Sprite$0: "https://raw.githubusercontent.com/thefurthermore818-dot/ec-assets/refs/heads/main/img/icon/Heart.png" };
-
+const imageUrl = { Sprite$0: "https://i.postimg.cc/mkqX8ZcJ/Sprite$0.png" };
 let Sprite$0 = loadImage(imageUrl.Sprite$0,
   {
     'height': '256px',
