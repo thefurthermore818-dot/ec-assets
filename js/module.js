@@ -106,7 +106,6 @@ async function loadImage(link, style, init, onload) {
         Object.entries(style).forEach(([k, v]) => { img.style[k] = v; });
         ObjectImageDictionary[init] = img;
         onload(); resolve(img);
-        console.log("Done", img.src)
       } else { reject(new Error("Failed to convert image to Base64.")); }
     }).catch(error =>
     { if (error && error.message === "Image takes too long.")
@@ -119,19 +118,22 @@ async function loadImage(link, style, init, onload) {
 
 
 const imageUrl = { Sprite$0: "https://i.postimg.cc/mkqX8ZcJ/Sprite$0.png" };
+
 let Sprite$0 = loadImage(imageUrl.Sprite$0,
   {
     'height': '256px',
     'width': 'auto',
     'image-rendering': 'pixelated',
   }, 'Sprite$0', () =>
-    { console.log("Rendering!") 
-      const enemyElement = document.getElementById('enemy');
+    { const enemyElement = document.getElementById('enemy');
       const imageElement = ObjectImageDictionary.Sprite$0;
-      const wrapperDiv = document.createElement('div');
-      if (enemyElement && imageElement) {  
+      if (enemyElement && imageElement) {
+        const wrapperDiv = document.createElement('div');
         wrapperDiv.append(imageElement); // Put the image inside the new div
         enemyElement.append(wrapperDiv); // Put the new div inside the 'enemy' element
-      } console.log("Rendered!")
+      }
+      imageElement.parentElement.style.backgroundColor = '#0F08';
+      imageElement.parentElement.style.border = '2px solid #604D35';
+      imageElement.parentElement.style.borderRadius = '6px';
     }
-);
+); 
