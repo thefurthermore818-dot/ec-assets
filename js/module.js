@@ -125,12 +125,13 @@ let Sprite$0 = loadImage(imageUrl.Sprite$0,
     'width': 'auto',
     'image-rendering': 'pixelated',
   }, 'Sprite$0', () =>
-    { const enemyElement = document.getElementById('enemy');
+    { console.log("Rendering!") 
+      const enemyElement = document.getElementById('enemy');
       const imageElement = ObjectImageDictionary.Sprite$0;
       const wrapperDiv = document.createElement('div');
       if (enemyElement && imageElement) {  
         wrapperDiv.append(imageElement); // Put the image inside the new div
         enemyElement.append(wrapperDiv); // Put the new div inside the 'enemy' element
-      }
+      } console.log("Rendered!")
     }
 );
