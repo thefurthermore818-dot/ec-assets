@@ -106,6 +106,7 @@ async function loadImage(link, style, init, onload) {
         Object.entries(style).forEach(([k, v]) => { img.style[k] = v; });
         ObjectImageDictionary[init] = img;
         onload(); resolve(img);
+        console.log("Done", img.src)
       } else { reject(new Error("Failed to convert image to Base64.")); }
     }).catch(error =>
     { if (error && error.message === "Image takes too long.")
@@ -131,8 +132,5 @@ let Sprite$0 = loadImage(imageUrl.Sprite$0,
         wrapperDiv.append(imageElement); // Put the image inside the new div
         enemyElement.append(wrapperDiv); // Put the new div inside the 'enemy' element
       }
-      wrapperDiv.style.backgroundColor = '#0F08';
-      wrapperDiv.style.border = '2px solid #604D35';
-      wrapperDiv.style.borderRadius = '6px';
     }
 );
