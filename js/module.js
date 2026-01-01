@@ -127,13 +127,13 @@ let Sprite$0 = loadImage(imageUrl.Sprite$0,
   }, 'Sprite$0', () =>
     { const enemyElement = document.getElementById('enemy');
       const imageElement = ObjectImageDictionary.Sprite$0;
-      if (enemyElement && imageElement) {
-        const wrapperDiv = document.createElement('div');
+      const wrapperDiv = document.createElement('div');
+      if (enemyElement && imageElement) {  
         wrapperDiv.append(imageElement); // Put the image inside the new div
         enemyElement.append(wrapperDiv); // Put the new div inside the 'enemy' element
       }
-      imageElement.parentElement.style.backgroundColor = '#0F08';
-      imageElement.parentElement.style.border = '2px solid #604D35';
-      imageElement.parentElement.style.borderRadius = '6px';
+      wrapperDiv.style.backgroundColor = '#0F08';
+      wrapperDiv.style.border = '2px solid #604D35';
+      wrapperDiv.style.borderRadius = '6px';
     }
 );
