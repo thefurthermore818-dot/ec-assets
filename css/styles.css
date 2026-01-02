@@ -3,6 +3,9 @@
   text-decoration: none;
 }
 
+img {
+  image-rendering: pixelated;
+}
 
 .parent {
   max-width: 100%;
