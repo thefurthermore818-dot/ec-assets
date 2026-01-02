@@ -71,10 +71,10 @@
           <div class="hp-container"><div class="hp-bar"></div></div>
           </div>
           <div id="playerStats"> <strong>Player Stats : </strong>
-            <img src='img/icon/Attack.png'>
+            <img alt='ATK-icon' id="ATK-icon">
             <li id="ATKStats"></li>
-            <img src='img/icon/Defence.png'>
-            <li id="DEFStats"></li>
+            <img alt='DEF-icon'>
+            <li id="DEFStats" id="DEF-icon"></li>
           </div><details>
           <summary><strong>Equipment Dropdown</strong></summary>
             <div class="grid-container" id="player-equipment">
@@ -104,6 +104,7 @@
   <div id="enemy-container">
     <div class="enemy">
       <h2>Enemy: $Monster</h2>
+      <img alt='Monster-Sprite' id="Monster-Sprite">
       <p id="enemy-level">Level $level</p>
       <div id="health-bar-enemy" style="border: 1px solid #000">
         <div id="health-enemy"></div></div>
