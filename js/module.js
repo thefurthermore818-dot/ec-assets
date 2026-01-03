@@ -123,7 +123,7 @@ let Sprite$0 = loadImage(imageUrl.Sprite$0,
     'width': 'auto',
     'image-rendering': 'pixelated',
   }, 'Sprite$0', () =>
-    { const enemyElement = document.getElementsByClassName("enemy");
+    { const enemyElement = document.getElementsByClassName("enemy")?.[0];
       const imageElement = document.createElement('img');
       imageElement.src = ObjectImageDictionary.Sprite$0;
       const wrapperDiv = document.createElement('div');
