@@ -1,13 +1,12 @@
 "use strict";
 
-function $CreateElement(elementProps = { elementType: 'div' }) {
-  const type = elementProps.elementType || 'div';
-  const element = document.createElement(type);
-  
-  Object.entries(elementProps).forEach(([key, value]) => {
-    if (key === 'elementType') return;
-    element[key] = value;
-  }); return element;
+function $CreateElement(
+  elementObject = {elementType : 'div'}
+) {
+  return document.createElement(elementObject.elementType)
+    .modify(($) => {$.innerHTML = elementType.innerHTML;
+      return $;
+    });
 }
 
 const [randomRandInt, randomRandChoice, randomRandChoices,
@@ -114,6 +113,7 @@ class Player
     this.locationLoot['0, 0'] = ["Leather_Tunic", "Wooden_Sword"];
     this.locationType['undefined'] = enumBiome['Corrupt'];
     this.locationType['0, 0'] = enumBiome["Spawn Hut"];
+    this.locationType['0, 2'] = enumBiome["Enemy Hut"];
   }
 
   levelUp()
@@ -392,7 +392,7 @@ function noodle(data = {startX, startY, locationValue, length, iteration})
   let select = createPath(data.startX, data.startY, data.length, data.iteration);
   select.forEach(element => { player.biomeSet(...element, data.locationValue) });
   let secondarySelect = select.filter(element => Math.abs(element[0]) > 5 && Math.abs(element[1]) > 5)
-    .filter(element => !(element[0] % 5) && !(element[1] % 5));
+    .filter(element => true);
    secondarySelect = secondarySelect.map(element => {
      const direction = randomRandChoice([[0, 1], [0, -1], [1, 0], [-1, 0]]);
      return [element[0] + direction[0], element[1] + direction[1]];
@@ -416,10 +416,10 @@ function generateRandomNoiseMap(rules = {
     { preWorld[`${dx}, ${dy}`] = 0; }
   }
 
-  while (iterations)
+  while (iterations >= 0)
   {
-    let x = randomRandInt(-dimension, dimension);
-    let y = randomRandInt(-dimension, dimension);
+    let x = randomRandInt(0, dimension);
+    let y = randomRandInt(0, dimension);
     preWorld[`${x}, ${y}`] = delta;
     iterations--;
   }
@@ -504,8 +504,9 @@ let EnemyPositionsMap = new Map();
   deduce({humidity: humidity});
 
   // @ Road, Enemy Hut
-  noodle({startX: 0, startY: 0, locationValue: enumBiome["Path"],
-    length: 5, iteration: 12, secondaryValue: enumBiome["Enemy Hut"]})
+  noodle({startX: 0, startY: 0,
+    locationValue: enumBiome["Path"],
+    length: 5, iteration: 12})
 
   for (let i = 0; i < 64; i++)
   {
@@ -836,15 +837,6 @@ document.querySelectorAll('.equipment').forEach((element) =>
     } 
   )
 })
-
-document.addEventListener('keydown', function (event)
-{
-  if (event.key) {
-    document.getElementById('title-screen').style.display = 'none';
-    document.getElementById('game').style.display = 'block';
-    updatePosition();
-  }
-});
 
 document.getElementById('grid').addEventListener('click', event =>
 {
