@@ -1,5 +1,7 @@
 "use strict";
 
+import {OuroborosModule} from './module.js'
+
 function $CreateElement(
   elementObject = {elementType : 'div'}
 ) {
