@@ -1,5 +1,5 @@
-const Start = new Date();
-const OuroborosModule = {
+export const Start = new Date();
+export const OuroborosModule = {
   randomRandInt: function(low, high) {
     if (!Number.isInteger(low) || !Number.isInteger(high)) {
       throw new TypeError("Must be integer number");
@@ -62,7 +62,7 @@ const OuroborosModule = {
 }
 
 const TIMEOUT_MS = 60 * 1000;
-let ObjectImageDictionary = {};
+export const ObjectImageDictionary = {};
 
 async function fetchImageAsBase64(imageUrl) {
   const controller = new AbortController();
@@ -94,7 +94,7 @@ async function fetchImageAsBase64(imageUrl) {
   }
 }
 
-async function loadImage(link, style, init, onload) {
+export async function loadImage(link, style, init, onload) {
   return new Promise((resolve, reject) => {
     fetchImageAsBase64(link).then(base64String => {
       if (base64String) { console.log("Image as Base64 string:"
@@ -115,9 +115,9 @@ async function loadImage(link, style, init, onload) {
 };
 
 
-const imageUrl = { Sprite$0: "https://i.postimg.cc/mkqX8ZcJ/Sprite$0.png" };
+export const imageUrl = { Sprite$0: "https://i.postimg.cc/mkqX8ZcJ/Sprite$0.png" };
 
-let Sprite$0 = loadImage(imageUrl.Sprite$0,
+export const Sprite$0 = loadImage(imageUrl.Sprite$0,
   {
     'height': '256px',
     'width': 'auto',
