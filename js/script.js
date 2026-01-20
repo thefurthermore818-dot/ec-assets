@@ -1,6 +1,8 @@
 "use strict";
 
 import {OuroborosModule} from './module.js'
+import {Start, Sprite$0, loadImage} from './module.js'
+
 
 function $CreateElement(
   elementObject = {elementType : 'div'}
