@@ -87,7 +87,7 @@ body {
   flex-direction: column;
   align-items: center;
   font-family: Monospace;
-  background-color: #ACD1AF;
+  background-image: url('../img/icon/sprite/Background.png');
 }
 
 @media screen and (max-width: 1000px) {
