@@ -114,6 +114,14 @@ export async function loadImage(link, style, init, onload) {
   });
 };
 
+export function $CreateElement(
+  elementObject = {elementType : 'div'}
+) {
+  return document.createElement(elementObject.elementType)
+    .modify(($) => {$.innerHTML = elementType.innerHTML;
+      return $;
+    });
+}
 
 export const imageUrl = { Sprite$0: "https://i.postimg.cc/mkqX8ZcJ/Sprite$0.png" };
 
