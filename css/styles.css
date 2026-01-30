@@ -72,6 +72,7 @@ button {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background-image: url('./../img/icon/sprite/Background.png'); 
 }
 
 .game-container {
@@ -87,7 +88,6 @@ body {
   flex-direction: column;
   align-items: center;
   font-family: Monospace;
-  background-image: url('./../img/icon/sprite/Background.png');
 }
 
 @media screen and (max-width: 1000px) {
@@ -118,7 +118,7 @@ body {
     background-color: #FFEE8C;
     border-radius: 50%;
     position: absolute;
-    top: 141px;
+    t 141px;
     left: 141px;
   }
 }
