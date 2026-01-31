@@ -88,6 +88,7 @@ body {
   align-items: center;
   font-family: Monospace;
   background-color: #ACD1CF;
+  background-image: url('./../img/icon/Background.png');
 }
 
 @media screen and (max-width: 1000px) {
