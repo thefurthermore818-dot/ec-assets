@@ -89,6 +89,9 @@ body {
   font-family: Monospace;
   background-color: #ACD1CF;
   background-image: url('./../img/icon/Background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 @media screen and (max-width: 1000px) {
