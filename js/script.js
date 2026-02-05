@@ -335,7 +335,9 @@ document.getElementById('player-body').textContent === "None" ?
 
 document.querySelectorAll('[id^="player-"]')
   .forEach((element) => {
-    element.textContent = 'None';
+    element.addEventListener('click',
+      { element.textContent = 'None'; }
+    )
 });
 
 function createPath(startX, startY, segmentLength, iterations)
