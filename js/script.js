@@ -333,7 +333,7 @@ document.getElementById('player-body').textContent === "None" ?
   document.getElementById('player-body').disabled = true :
   document.getElementById('player-body').disabled = false;
 
-document.querySelectorAll('[id^="player-"]')
+document.querySelectorAll('.equipment')
   .forEach((element) => {
     element.addEventListener('click',
       { element.textContent = 'None'; }
