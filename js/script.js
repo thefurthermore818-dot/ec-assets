@@ -333,7 +333,10 @@ document.getElementById('player-body').textContent === "None" ?
   document.getElementById('player-body').disabled = true :
   document.getElementById('player-body').disabled = false;
 
-
+document.querySelectorAll('[id^="player-"]')
+  .forEach((element) => {
+    element.textContent = 'None';
+});
 
 function createPath(startX, startY, segmentLength, iterations)
 {
