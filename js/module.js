@@ -123,7 +123,7 @@ export function $CreateElement(
     });
 }
 
-export const imageUrl = { Sprite$0: "https://i.postimg.cc/mkqX8ZcJ/Sprite$0.png" };
+export const imageUrl = { Sprite$0: "https://raw.githubusercontent.com/thefurthermore818-dot/ec-assets/refs/heads/main/img/sprite/Sprite0.png" };
 
 export const Sprite$0 = loadImage(imageUrl.Sprite$0,
   {
