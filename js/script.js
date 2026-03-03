@@ -811,14 +811,12 @@ document.getElementById('fileInput').addEventListener(
 
 function EncodeWorld()
 {
-  let output = String();
+  let output = "WORLD";
   for (let dx of arrayIota(-64, 64, 1))
   {
     for (let dy of arrayIota(-64, 64, 1))
     {
-      output = output.concat(`${dx} ${dy} `,
-        `${player.locationType[`${dx}, ${dy}`]}`,
-        '\n');
+      output = output.concat(player.locationType[`${dx}, ${dy}`]);
     }
   }
   return output;
@@ -826,13 +824,7 @@ function EncodeWorld()
 
 function Decode(StringWorld)
 {
-  StringWorld.split('\n').forEach(line =>
-  {
-    let $ = line.split(' ');
-    if ($.length != 3) return;
-    player.biomeSet(parseInt($[0]), parseInt($[1]),
-      parseInt($[2]));
-  });
+
 }
 
 document.querySelectorAll('.equipment').forEach((element) => 
