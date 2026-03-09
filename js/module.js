@@ -1,4 +1,81 @@
 export const Start = new Date();
+
+class SeededPerlin {
+  constructor(seed = 0) {
+    this.seed = seed;
+    this.p = new Uint8Array(512);
+    this.initPermutation();
+  }
+
+  // Mulberry32 PRNG - high performance, decent distribution for 32-bit seeds
+  seededRandom(s) {
+    return function() {
+      let t = s += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  initPermutation() {
+    const random = this.seededRandom(this.seed);
+    const permutation = Array.from({ length: 256 }, (_, i) => i);
+
+    // Fisher-Yates Shuffle using our seeded PRNG
+    for (let i = 255; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [permutation[i], permutation[j]] = [permutation[j], permutation[i]];
+    }
+
+    // Double the table to avoid overflow during indexing
+    for (let i = 0; i < 512; i++) {
+      this.p[i] = permutation[i % 256];
+    }
+  }
+
+  fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+  lerp(t, a, b) { return a + t * (b - a); }
+  
+  grad(hash, x, y) {
+    const h = hash & 3;
+    const u = h < 2 ? x : y;
+    const v = h < 2 ? y : x;
+    return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+  }
+
+  noise(x, y) {
+    let X = Math.floor(x) & 255;
+    let Y = Math.floor(y) & 255;
+    x -= Math.floor(x);
+    y -= Math.floor(y);
+    const u = this.fade(x);
+    const v = this.fade(y);
+
+    const aa = this.p[this.p[X] + Y];
+    const ab = this.p[this.p[X] + Y + 1];
+    const ba = this.p[this.p[X + 1] + Y];
+    const bb = this.p[this.p[X + 1] + Y + 1];
+
+    return this.lerp(v, 
+      this.lerp(u, this.grad(aa, x, y), this.grad(ba, x - 1, y)),
+      this.lerp(u, this.grad(ab, x, y - 1), this.grad(bb, x - 1, y - 1))
+    );
+  }
+
+  generateMap(width, height, scale = 0.1) {
+    const map = [];
+    for (let y = 0; y < height; y++) {
+      const row = [];
+      for (let x = 0; x < width; x++) {
+        const val = this.noise(x * scale, y * scale);
+        row.push((val + 1) / 2);
+      }
+      map.push(row);
+    }
+    return map;
+  }
+}
+
 export const OuroborosModule = {
   randomRandInt: function(low, high) {
     if (!Number.isInteger(low) || !Number.isInteger(high)) {
