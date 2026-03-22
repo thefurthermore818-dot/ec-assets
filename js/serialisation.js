@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO: Revamp all of this 
+
 import { OuroborosModule } from './module.js';
 import { player } from './player.js';
 
