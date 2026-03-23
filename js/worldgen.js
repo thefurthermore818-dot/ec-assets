@@ -1,6 +1,6 @@
 "use strict";
 
-import { OuroborosModule } from './module.js';
+import { OuroborosModule, SeededPerlin } from './module.js';
 import { enumBiome } from './constants.js';
 import { player } from './player.js';
 import { Enemy, EnemyPositionsMap } from './enemy.js';
@@ -77,77 +77,32 @@ function noodle(data = { startX: 0, startY: 0, locationValue: 0, length: 1, iter
   console.log(secondarySelect);
 }
 
-function generateRandomNoiseMap(rules = { dimension: 1, iterations: 0, delta: 1 }) {
-  const { dimension, iterations, delta } = rules;
-  let preWorld = {};
-  let remaining = iterations;
-
-  for (let dy = -dimension; dy <= dimension; dy++) {
-    for (let dx = -dimension; dx <= dimension; dx++) {
-      preWorld[`${dx}, ${dy}`] = 0;
-    }
-  }
-
-  while (remaining >= 0) {
-    const x = randomRandInt(0, dimension);
-    const y = randomRandInt(0, dimension);
-    preWorld[`${x}, ${y}`] = delta;
-    remaining--;
-  }
-
-  return preWorld;
+function generateRandomNoiseMap() {
+  return (new SeededPerlin(0)).generateMap(127, 127, 1);
 }
 
-function smoothNoise(preWorld) {
-  const postWorld = { ...preWorld };
-  const dimension = Math.floor(Math.sqrt(Object.values(preWorld).length) / 2);
-
-  for (let dy = -dimension; dy <= dimension; dy++) {
-    for (let dx = -dimension; dx <= dimension; dx++) {
-      let neighbors = 0;
-      neighbors += preWorld[`${dx + 1}, ${dy}`]     == 1 ? 1 : 0;
-      neighbors += preWorld[`${dx - 1}, ${dy}`]     == 1 ? 1 : 0;
-      neighbors += preWorld[`${dx}, ${dy + 1}`]     == 1 ? 1 : 0;
-      neighbors += preWorld[`${dx}, ${dy - 1}`]     == 1 ? 1 : 0;
-      neighbors += preWorld[`${dx + 1}, ${dy + 1}`] == 1 ? 1 : 0;
-      neighbors += preWorld[`${dx - 1}, ${dy - 1}`] == 1 ? 1 : 0;
-      neighbors += preWorld[`${dx - 1}, ${dy + 1}`] == 1 ? 1 : 0;
-      neighbors += preWorld[`${dx + 1}, ${dy - 1}`] == 1 ? 1 : 0;
-
-      if (neighbors >= 6 && preWorld[`${dx}, ${dy}`]) {
-        if (randomRandInt(0, 1)) postWorld[`${dx}, ${dy}`] = 2;
+function deduce(worldField) {
+  worldField.forEach((row, dy) => {
+    row.forEach((it, dx) => {
+      if (it * 3 >= 2) {
+        player.biomeSet(dx - 63, dy - 63, enumBiome["Forest Lake"]);
+      } else if (it * 2 >= 2) {
+        player.biomeSet(dx - 63, dy - 63, enumBiome["Peaceful Forest"]);
       }
-    }
-  }
-
-  return postWorld;
-}
-
-function deduce(rawWorld = { humidity: {}, height: {} }) {
-  for (let dy = -63; dy <= 63; dy++) {
-    for (let dx = -63; dx <= 63; dx++) {
-      if (rawWorld.humidity[`${dx}, ${dy}`] == 2) {
-        player.biomeSet(dx, dy, enumBiome["Forest Lake"]);
-      }
-      if (rawWorld.humidity[`${dx}, ${dy}`] == 1) {
-        player.biomeSet(dx, dy, enumBiome["Peaceful Forest"]);
-      } else {
-        continue;
-      }
-    }
-  }
+    });
+  });
 }
 
 export function generateWorld() {
   // Fill with base biome
-  for (let dy = -64; dy <= 64; dy++) {
+  for   (let dy = -64; dy <= 64; dy++) {
     for (let dx = -64; dx <= 64; dx++) {
       player.biomeSet(dx, dy, enumBiome["Broad Forest"]);
     }
   }
 
   // Borders
-  for (let i = 0; i <= randomRandInt(59, 73); i++) {
+  for (let i = 0; i <= 64; i++) {
     player.biomeSet( 64,  i,  enumBiome["Border"]);
     player.biomeSet( i,   64, enumBiome["Border"]);
     player.biomeSet( i,  -64, enumBiome["Border"]);
@@ -158,12 +113,6 @@ export function generateWorld() {
     player.biomeSet(-64, -i,  enumBiome["Border"]);
   }
 
-  // Humidity / forest / lakes
-  const humidity = smoothNoise(
-    generateRandomNoiseMap({ dimension: 63, iterations: 4096, delta: 1 })
-  );
-  deduce({ humidity });
-
   // Roads and enemy huts
   noodle({
     startX: 0, startY: 0,
@@ -171,7 +120,10 @@ export function generateWorld() {
     secondaryValue: enumBiome["Enemy Hut"],
     length: 5, iteration: 12,
   });
-
+  
+  // Humidity / forest / lakes
+  deduce(generateRandomNoiseMap()); 
+  
   // Steep cliffs
   for (let i = 0; i < 64; i++) {
     let canApply = true;
