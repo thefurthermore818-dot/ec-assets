@@ -1,6 +1,6 @@
 export const Start = new Date();
 
-class SeededPerlin {
+export class SeededPerlin {
   constructor(seed = 0) {
     this.seed = seed;
     this.p = new Uint8Array(512);
