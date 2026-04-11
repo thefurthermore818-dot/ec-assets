@@ -1,5 +1,15 @@
 export const Start = new Date();
 
+// Mulberry32 PRNG - high performance, decent distribution for 32-bit seeds
+export function seededRandom(s) {
+    return function() {
+      let t = s += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  } 
+
 export class SeededPerlin {
   constructor(seed = 0) {
     this.seed = seed;
@@ -7,18 +17,8 @@ export class SeededPerlin {
     this.initPermutation();
   }
 
-  // Mulberry32 PRNG - high performance, decent distribution for 32-bit seeds
-  seededRandom(s) {
-    return function() {
-      let t = s += 0x6D2B79F5;
-      t = Math.imul(t ^ t >>> 15, t | 1);
-      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };
-  }
-
   initPermutation() {
-    const random = this.seededRandom(this.seed);
+    const random = seededRandom(this.seed);
     const permutation = Array.from({ length: 256 }, (_, i) => i);
 
     // Fisher-Yates Shuffle using our seeded PRNG
