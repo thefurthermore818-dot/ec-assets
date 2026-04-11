@@ -7,74 +7,101 @@ import { Enemy, EnemyPositionsMap } from './enemy.js';
 
 const { randomRandInt, randomRandChoice } = OuroborosModule;
 
-function createPath(startX, startY, segmentLength, iterations) {
-  if (segmentLength < 1) {
-    throw new Error("Segment length must be 1 or greater.");
-  }
+function createPerlinPath(startX, startY, segmentLength, iterations, perlin, {
+  scale = 0.18, forkScale = 0.18, forkOffset = 100,
+  forkThreshold = 0.99,     // 0–1: higher = fewer forks
+  maxForkDepth  = 2,        // how many levels of branching allowed
+  forkIterRatio = 0.99,     // forks get this fraction of remaining iterations
+} = {}) {
+  const occupiedCells = new Set(); const allPaths = []; 
 
-  const path = [], occupiedCells = new Set();
-  let currentPos = [startX, startY];
-  path.push(currentPos);
-  occupiedCells.add(currentPos.join(','));
-
-  const directions = [
-    [ segmentLength,  0],
-    [-segmentLength,  0],
-    [0,  segmentLength],
-    [0, -segmentLength],
+  const cardinals = [
+    [0,            [ 1,  0]], [Math.PI / 2,  [ 0,  1]],
+    [Math.PI,      [-1,  0]], [Math.PI * 1.5,[ 0, -1]],
   ];
 
-  for (let i = 0; i < iterations; i++) {
-    const validPaths = [];
-    const [x1, y1]  = currentPos;
+  function walk(x, y, iters, depth) {
+    let cx = x, cy = y;
+    occupiedCells.add(`${cx},${cy}`);
 
-    for (const [dx, dy] of directions) {
-      const x2 = x1 + dx, y2 = y1 + dy;
-      let hasCollision = false;
-      const cellsToOccupy = [];
-      const stepX = Math.sign(dx), stepY = Math.sign(dy);
+    for (let i = 0; i < iters; i++) {
+      // Sample noise → angle in [0, 2π)
+      const n     = perlin.noise(cx * scale, cy * scale);  // [-1, 1] ish
+      const angle = (n + 1) * Math.PI;                     // map to [0, 2π)
 
-      for (let j = 1; j <= segmentLength; j++) {
-        const checkX = x1 + j * stepX;
-        const checkY = y1 + j * stepY;
-        const key    = `${checkX},${checkY}`;
-        if (occupiedCells.has(key)) { hasCollision = true; break; }
-        cellsToOccupy.push([checkX, checkY]);
+      const sorted = cardinals.slice().sort((a, b) => {
+        const da = Math.abs(((a[0] - angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+        const db = Math.abs(((b[0] - angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+        return da - db;
+      });
+
+      let moved = false;
+      for (const [, [dx, dy]] of sorted) {
+        const cells = []; let blocked = false;
+
+        for (let j = 1; j <= segmentLength; j++) {
+          const nx = cx + dx * j, ny = cy + dy * j;
+          if (occupiedCells.has(`${nx},${ny}`)) { blocked = true; break; }
+          cells.push([nx, ny]);
+        }
+
+        if (!blocked) {
+          cells.forEach(c => {
+            occupiedCells.add(c.join(','));
+            allPaths.push(c);
+          });
+          cx = cx + dx * segmentLength;
+          cy = cy + dy * segmentLength;
+          moved = true; break;
+        }
       }
 
-      if (!hasCollision) {
-        validPaths.push({ end: [x2, y2], cells: cellsToOccupy });
+      if (!moved) break;  // trapped, help me
+
+      // Fork check
+      if (depth < maxForkDepth) {
+        const fn = (perlin.noise(cx * forkScale + forkOffset, cy * forkScale + forkOffset) + 1) / 2;
+        if (fn > forkThreshold) {
+          const forkIters = Math.max(1, Math.floor((iters - i) * forkIterRatio));
+          walk(cx, cy, forkIters, depth + 1);
+        }
       }
     }
-
-    if (validPaths.length === 0) break;
-
-    const selected = validPaths[Math.floor(Math.random() * validPaths.length)];
-    selected.cells.forEach(cell => {
-      path.push(cell);
-      occupiedCells.add(cell.join(','));
-    });
-    currentPos = selected.end;
   }
 
-  return path;
+  allPaths.push([startX, startY]);
+  walk(startX, startY, iterations, 0);
+  return allPaths;
 }
 
-function noodle(data = { startX: 0, startY: 0, locationValue: 0, length: 1, iteration: 1, secondaryValue: undefined }) {
-  const select = createPath(data.startX, data.startY, data.length, data.iteration);
-  select.forEach(element => player.biomeSet(...element, data.locationValue));
+function noodle(data = {
+  startX: 0, startY: 0, locationValue: 0, length: 1,
+  iteration: 1, secondaryValue: undefined, seed: 0,
+}) {
+  const perlin = new SeededPerlin(data.seed ?? 0);
 
-  let secondarySelect = select
-    .filter(element => Math.abs(element[0]) > 0 && Math.abs(element[1]) > 0)
-    .map(element => {
-      const direction = randomRandChoice([[0, 1], [0, -1], [1, 0], [-1, 0]]);
-      return [element[0] + direction[0], element[1] + direction[1]];
-    });
+  const select = createPerlinPath(
+    data.startX, data.startY,
+    data.length, data.iteration,
+    perlin,
+    { forkThreshold: data.forkThreshold ?? 0.72,
+      maxForkDepth:  data.maxForkDepth  ?? 2, }
+  );
 
+  select.forEach(([x, y]) => player.biomeSet(x, y, data.locationValue));
+  console.log(select)
   if (data.secondaryValue !== undefined) {
-    secondarySelect.forEach(element => player.biomeSet(...element, data.secondaryValue));
+    select
+      .filter(([x, y]) => Math.abs(x) > 0 && Math.abs(y) > 0)
+      .forEach(([x, y]) => {
+        const n = (perlin.noise(x * 0.3 + 50, y * 0.3 + 50) + 1) / 2;
+        // scatter ~40% of path cells, noise-driven
+        if (n > 0.6) player.biomeSet(x, y, data.secondaryValue);
+      });
+    select
+      .filter(([x, y]) => Math.abs(x) > 0 && Math.abs(y) > 0)
+      .forEach(([x, y]) => { console.log([x, y]) })
   }
-  console.log(secondarySelect);
 }
 
 function generateRandomNoiseMap() {
@@ -115,11 +142,14 @@ export function generateWorld() {
 
   // Roads and enemy huts
   noodle({
-    startX: 0, startY: 0,
-    locationValue:  enumBiome["Path"],
-    secondaryValue: enumBiome["Enemy Hut"],
-    length: 5, iteration: 12,
-  });
+  startX: 0, startY: 0,
+  locationValue:  enumBiome["Path"],
+  secondaryValue: enumBiome["Enemy Hut"],
+  length: 5, iteration: 12,
+  seed: 0,
+  forkThreshold: 0.70,  // optional tuning
+  maxForkDepth: 2,
+});
   
   // Humidity / forest / lakes
   deduce(generateRandomNoiseMap()); 
