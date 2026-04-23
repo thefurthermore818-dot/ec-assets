@@ -89,7 +89,6 @@ function noodle(data = {
   );
 
   select.forEach(([x, y]) => player.biomeSet(x, y, data.locationValue));
-  console.log(select)
   if (data.secondaryValue !== undefined) {
     select
       .filter(([x, y]) => Math.abs(x) > 0 && Math.abs(y) > 0)
@@ -99,8 +98,7 @@ function noodle(data = {
         if (n > 0.6) player.biomeSet(x, y, data.secondaryValue);
       });
     select
-      .filter(([x, y]) => Math.abs(x) > 0 && Math.abs(y) > 0)
-      .forEach(([x, y]) => { console.log([x, y]) })
+      .filter(([x, y]) => Math.abs(x) > 0 && Math.abs(y) > 0);
   }
 }
 
