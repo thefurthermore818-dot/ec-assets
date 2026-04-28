@@ -1,10 +1,10 @@
 "use strict";
 
-import { OuroborosModule } from './module.js';
+import { Module } from './module.js';
 import { enumBiome, colourType } from './constants.js';
 import { item } from './items.js';
 
-const { arrayRemove } = OuroborosModule;
+const { arrayRemove } = Module;
 
 export class Player {
   constructor() {
