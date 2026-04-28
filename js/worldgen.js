@@ -1,11 +1,11 @@
 "use strict";
 
-import { OuroborosModule, SeededPerlin } from './module.js';
+import { Module, SeededPerlin } from './module.js';
 import { enumBiome } from './constants.js';
 import { player } from './player.js';
 import { Enemy, EnemyPositionsMap } from './enemy.js';
 
-const { randomRandInt, randomRandChoice } = OuroborosModule;
+const { randomRandInt, randomRandChoice } = Module;
 
 function createPerlinPath(startX, startY, segmentLength, iterations, perlin, {
   scale = 0.18, forkScale = 0.18, forkOffset = 100,
@@ -140,14 +140,14 @@ export function generateWorld() {
 
   // Roads and enemy huts
   noodle({
-  startX: 0, startY: 0,
-  locationValue:  enumBiome["Path"],
-  secondaryValue: enumBiome["Enemy Hut"],
-  length: 5, iteration: 12,
-  seed: 0,
-  forkThreshold: 0.70,  // optional tuning
-  maxForkDepth: 2,
-});
+	startX: 0, startY: 0,
+	locationValue:  enumBiome["Path"],
+    secondaryValue: enumBiome["Enemy Hut"],
+	length: 5, iteration: 12,
+	seed: 0,
+	forkThreshold: 0.70,  // optional tuning
+	maxForkDepth: 2,
+  });
   
   // Humidity / forest / lakes
   deduce(generateRandomNoiseMap()); 
