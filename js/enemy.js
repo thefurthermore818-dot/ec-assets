@@ -1,12 +1,12 @@
 "use strict";
 
-import { OuroborosModule } from './module.js';
+import { Module } from './module.js';
 import { enumBiome } from './constants.js';
 import { item } from './items.js';
 import { player } from './player.js';
 import { updateHPBar, updateXPBar } from './ui.js';
 
-const { randomRandInt, randomRandChoices } = OuroborosModule;
+const { randomRandInt, randomRandChoices } = Module;
 
 export class Enemy {
   constructor(posX, posY, level = randomRandInt(1, 3)) {
