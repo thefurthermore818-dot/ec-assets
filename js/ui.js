@@ -1,12 +1,12 @@
 "use strict";
 
-import { OuroborosModule } from './module.js';
+import { Module } from './module.js';
 import { enumBiome, DialogueObject } from './constants.js';
 import { player } from './player.js';
 import { EnemyPositionsMap, Enemy } from './enemy.js';
 import { EncodeWorld, Decode } from './serialisation.js';
 
-const { randomRandInt, randomRandChoice, getKey } = OuroborosModule;
+const { randomRandInt, randomRandChoice, getKey } = Module;
 
 // ---------------------------------------------------------------------------
 // HP, XP -> bars
