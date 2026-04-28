@@ -4,7 +4,7 @@ import { Module } from './module.js';
 import { enumBiome, DialogueObject } from './constants.js';
 import { player } from './player.js';
 import { EnemyPositionsMap, Enemy } from './enemy.js';
-import { EncodeWorld, Decode } from './serialisation.js';
+import { Encode, Decode } from './serialisation.js';
 
 const { randomRandInt, randomRandChoice, getKey } = Module;
 
@@ -168,7 +168,7 @@ document.getElementById('grid').addEventListener('click', event => {
 // TODO: FIX
 document.getElementById('download').addEventListener('click', function () {
   const startTime = new Date();
-  const text      = EncodeWorld();
+  const text      = Encode();
   const blob      = new Blob([text], { type: 'text/plain' });
   const link      = document.createElement('a');
   link.href       = URL.createObjectURL(blob);
