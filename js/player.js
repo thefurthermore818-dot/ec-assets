@@ -42,7 +42,6 @@ export class Player {
     this.locationLoot['0, 0']      = ["Leather_Tunic", "Wooden_Sword"];
     this.locationType['undefined'] = enumBiome['Corrupt'];
     this.locationType['0, 0']      = enumBiome["Spawn Hut"];
-    this.locationType['0, 2']      = enumBiome["Enemy Hut"];
 
     this.locationValue  = undefined;
     this.locationBefore = undefined;

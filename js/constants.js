@@ -25,9 +25,9 @@ const trimString = (strings, ...values) => strings
   .replace(/\s+/g, " ").trim();
 
 export const DialogueObject = {
-  premise: trimString`You awoke suddenly in a straw and wood cottage,
+  premise: String(trimString`You awoke suddenly in a straw and wood cottage,
                       with a fantasy world beyond. You blinked twice 
-                      to see if you were dreaming; it was not a dream.`,
+                      to see if you were dreaming; it was not a dream.`),
 };
 
 export const colourType = [

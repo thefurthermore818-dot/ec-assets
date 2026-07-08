@@ -56,7 +56,7 @@ function createPerlinPath(startX, startY, segmentLength, iterations, perlin, {
         }
       }
 
-      if (!moved) break;  // trapped, help me
+      if (!moved) break; 
 
       // Fork check
       if (depth < maxForkDepth) {
@@ -107,13 +107,9 @@ function generateRandomNoiseMap() {
 }
 
 function deduce(worldField) {
-  worldField.forEach((row, dy) => {
-    row.forEach((it, dx) => {
-      if (it * 3 >= 2) {
-        player.biomeSet(dx - 63, dy - 63, enumBiome["Forest Lake"]);
-      } else if (it * 2 >= 2) {
-        player.biomeSet(dx - 63, dy - 63, enumBiome["Peaceful Forest"]);
-      }
+  worldField.forEach((row, dy) => { row.forEach((it, dx) => {
+      if (it * 3 >= 2) { player.biomeSet(dx - 63, dy - 63, enumBiome["Forest Lake"]); }
+      else if (it * 2 >= 2) { player.biomeSet(dx - 63, dy - 63, enumBiome["Peaceful Forest"]); }
     });
   });
 }
@@ -144,8 +140,7 @@ export function generateWorld() {
 	locationValue:  enumBiome["Path"],
     secondaryValue: enumBiome["Enemy Hut"],
 	length: 5, iteration: 12,
-	seed: 0,
-	forkThreshold: 0.70,  // optional tuning
+	seed: 0, forkThreshold: 0.70,  // optional tuning
 	maxForkDepth: 2,
   });
   

@@ -4,7 +4,6 @@ import { Module } from './module.js';
 import { enumBiome, DialogueObject } from './constants.js';
 import { player } from './player.js';
 import { EnemyPositionsMap, Enemy } from './enemy.js';
-import { Encode, Decode } from './serialisation.js';
 
 const { randomRandInt, randomRandChoice, getKey } = Module;
 
@@ -124,15 +123,7 @@ document.getElementById('start-button').addEventListener('click', function () {
   document.getElementById('title-screen').style.display = 'none';
   document.getElementById('game').style.display         = 'block';
   updatePosition();
-  document.getElementById('coordinates-describe').textContent = '';
-  (async () => new Promise(resolve => {
-    setTimeout(() => {
-      if (player.position.x === 0 && player.position.y === 0) {
-        document.getElementById('coordinates-describe').textContent =
-          DialogueObject.premise;
-      }
-    }, 1000);
-  }))();
+  document.getElementById('coordinates-describe').textContent = DialogueObject.premise;
 });
 
 // D-PAD, or arrows, whatever
@@ -147,8 +138,7 @@ document.querySelectorAll(".dpad input[type='button']").forEach(dpadButton =>
 // Grid click-to-move, I was going to deprecated this though... 
 document.getElementById('grid').addEventListener('click', event => {
   if (document.getElementById('game').style.display !== 'none') {
-    const cell = event.target.closest('.cell');
-    if (!cell) return;
+    const cell = event.target.closest('.cell'); if (!cell) return;
     const index        = parseInt(cell.dataset.index, 10);
     const userMovement = [];
     if ([1, 2, 3].includes(index)) userMovement.push('W');
@@ -168,7 +158,7 @@ document.getElementById('grid').addEventListener('click', event => {
 // TODO: FIX
 document.getElementById('download').addEventListener('click', function () {
   const startTime = new Date();
-  const text      = Encode();
+  const text      = Encode() ?? '';
   const blob      = new Blob([text], { type: 'text/plain' });
   const link      = document.createElement('a');
   link.href       = URL.createObjectURL(blob);
@@ -182,7 +172,7 @@ document.getElementById('download').addEventListener('click', function () {
 
 // Import by text
 document.getElementById('submit-import').addEventListener('click', () => {
-  Decode(document.getElementById('import-world').value);
+  Decode(document.getElementById('import-world').value)?? null;
 });
 
 // Import by file
@@ -191,7 +181,7 @@ document.getElementById('fileInput').addEventListener('change', event => {
   if (!file) throw new RangeError();
   const reader    = new FileReader();
   reader.onerror  = () => { throw new RangeError(); };
-  reader.onload   = () => Decode(reader.result);
+  reader.onload   = () => Decode(reader.result)?? null;
   reader.readAsText(file);
 });
 
@@ -201,7 +191,12 @@ document.querySelectorAll('.equipment').forEach(element => {
     console.log(element.textContent);
     if (element.textContent !== 'None') {
       player.inventoryItems.push(element.textContent);
+      const position = element.id.replace(/^player-/, '')
+        .replace(/\b\w/g, s => s.toUpperCase());
+      player.woreItems.set(position, "None")
+      console.log([...player.woreItems])
       player.renderItems();
+      player.updateItemStats();
     }
   });
 });
@@ -211,10 +206,10 @@ document.getElementById('toggleBox').addEventListener('click', function () {
   const userBox = document.getElementById('user-box');
   if (userBox.style.display === 'none' || userBox.style.display === '') {
     userBox.style.display = 'block';
-    this.textContent      = 'Close User Box';
+    this.textContent      = 'Close Inventory';
   } else {
     userBox.style.display = 'none';
-    this.textContent      = 'Open User Box';
+    this.textContent      = 'Inventory';
   }
 });
 
@@ -228,6 +223,9 @@ document.querySelectorAll('.close-button').forEach(node => {
   node.addEventListener('click', () => {
     document.getElementById('help-modal').style.display = 'none';
     document.getElementById('user-box').style.display   = 'none';
+    const userBox = document.getElementById('user-box');
+    userBox.style.display = 'none';
+    document.getElementById('toggleBox').textContent = 'Inventory';
   });
 });
 

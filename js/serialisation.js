@@ -1,7 +1,8 @@
-export function Encode() {
+"use strict";
 
-}
+// TODO: Revamp all of this 
 
-export function Decode() {
+import { Module } from './module.js';
+import { player } from './player.js';
 
-}
+const { arrayIota } = Module;
