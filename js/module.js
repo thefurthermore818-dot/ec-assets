@@ -62,10 +62,9 @@ export class SeededPerlin {
     );
   }
 
-  generateMap(width, height, scale = 0.1) {
+  generateMap(width, height, scale) {
     const map = [];
-    for (let y = 0; y < height; y++) {
-      const row = [];
+    for  (let y = 0; y < height; y++) { const row = [];
       for (let x = 0; x < width; x++) {
         const val = this.noise(x * scale, y * scale);
         row.push((val + 1) / 2);

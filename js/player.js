@@ -200,3 +200,21 @@ export class Player {
 
 // Shared singleton
 export const player = new Player();
+
+export function biomeSet(CoordinateX, CoordinateY, value) {
+  if (
+    !Number.isInteger(CoordinateX) ||
+    !Number.isInteger(CoordinateY) ||
+    !Number.isInteger(value)
+  ) {
+    console.error(CoordinateX, CoordinateY, value);
+    throw new TypeError("Invalid arguments");
+  }
+  
+  const currentType = player.locationType[`${CoordinateX}, ${CoordinateY}`] 
+    ?? player.locationType[undefined];
+
+  if (value < currentType) {
+    player.locationType[`${CoordinateX}, ${CoordinateY}`] = value;
+  }
+}

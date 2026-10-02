@@ -2,7 +2,7 @@
 
 import { Module, SeededPerlin } from './module.js';
 import { enumBiome } from './constants.js';
-import { player } from './player.js';
+import { player, biomeSet } from './player.js';
 import { Enemy, EnemyPositionsMap } from './enemy.js';
 
 const { randomRandInt, randomRandChoice } = Module;
@@ -88,28 +88,29 @@ function noodle(data = {
       maxForkDepth:  data.maxForkDepth  ?? 2, }
   );
 
-  select.forEach(([x, y]) => player.biomeSet(x, y, data.locationValue));
+  select.forEach(([x, y]) => biomeSet(x, y, data.locationValue));
   if (data.secondaryValue !== undefined) {
     select
       .filter(([x, y]) => Math.abs(x) > 0 && Math.abs(y) > 0)
       .forEach(([x, y]) => {
         const n = (perlin.noise(x * 0.3 + 50, y * 0.3 + 50) + 1) / 2;
         // scatter ~40% of path cells, noise-driven
-        if (n > 0.6) player.biomeSet(x, y, data.secondaryValue);
+        if (n > 0.6) biomeSet(x, y, data.secondaryValue);
       });
     select
       .filter(([x, y]) => Math.abs(x) > 0 && Math.abs(y) > 0);
   }
 }
 
-function generateRandomNoiseMap() {
-  return (new SeededPerlin(0)).generateMap(127, 127, 1);
+let generateRandomNoiseMap = function(seed = 0) {
+  return { seed: seed, map: (new SeededPerlin(seed))
+    .generateMap(127, 127, 0.1) };
 }
 
-function deduce(worldField) {
+function deduceForest(worldField) {
   worldField.forEach((row, dy) => { row.forEach((it, dx) => {
-      if (it * 3 >= 2) { player.biomeSet(dx - 63, dy - 63, enumBiome["Forest Lake"]); }
-      else if (it * 2 >= 2) { player.biomeSet(dx - 63, dy - 63, enumBiome["Peaceful Forest"]); }
+       if (it >= 0.56) { biomeSet(dx - 63, dy - 63, enumBiome["Forest Lake"])    ; }
+  else if (it >= 0.48) { biomeSet(dx - 63, dy - 63, enumBiome["Peaceful Forest"]); }
     });
   });
 }
@@ -118,20 +119,20 @@ export function generateWorld() {
   // Fill with base biome
   for   (let dy = -64; dy <= 64; dy++) {
     for (let dx = -64; dx <= 64; dx++) {
-      player.biomeSet(dx, dy, enumBiome["Broad Forest"]);
+      biomeSet(dx, dy, enumBiome["Broad Forest"]);
     }
   }
 
   // Borders
   for (let i = 0; i <= 64; i++) {
-    player.biomeSet( 64,  i,  enumBiome["Border"]);
-    player.biomeSet( i,   64, enumBiome["Border"]);
-    player.biomeSet( i,  -64, enumBiome["Border"]);
-    player.biomeSet(-64,  i,  enumBiome["Border"]);
-    player.biomeSet( 64, -i,  enumBiome["Border"]);
-    player.biomeSet(-i,   64, enumBiome["Border"]);
-    player.biomeSet(-i,  -64, enumBiome["Border"]);
-    player.biomeSet(-64, -i,  enumBiome["Border"]);
+    biomeSet( 64,  i,  enumBiome["Border"]);
+    biomeSet( i,   64, enumBiome["Border"]);
+    biomeSet( i,  -64, enumBiome["Border"]);
+    biomeSet(-64,  i,  enumBiome["Border"]);
+    biomeSet( 64, -i,  enumBiome["Border"]);
+    biomeSet(-i,   64, enumBiome["Border"]);
+    biomeSet(-i,  -64, enumBiome["Border"]);
+    biomeSet(-64, -i,  enumBiome["Border"]);
   }
 
   // Roads and enemy huts
@@ -145,22 +146,15 @@ export function generateWorld() {
   });
   
   // Humidity / forest / lakes
-  deduce(generateRandomNoiseMap()); 
+  let humiditySeed = randomRandInt(0, 1024);
+  deduceForest(generateRandomNoiseMap
+      (humiditySeed).map); 
   
   // Steep cliffs
-  for (let i = 0; i < 64; i++) {
-    let canApply = true;
-    const [x, y] = [randomRandInt(-64, 64), randomRandInt(-64, 64)];
-    outer:
-    for (let dx = -2; dx <= 2; dx++) {
-      for (let dy = -2; dy <= 2; dy++) {
-        if (player.locationType[`${x + dx}, ${y + dy}`] < enumBiome["Steep Cliff"]) {
-          i--;
-          canApply = false;
-          break outer;
-        }
-      }
-    }
-    if (canApply) player.biomeSet(x, y, enumBiome["Steep Cliff"]);
-  }
+  let cliffSeed = randomRandInt(0, 1024);
+  generateRandomNoiseMap(cliffSeed).map.forEach((_, index) => {
+    const target = _.indexOf(Math.max(..._));
+    biomeSet(target - 64, index - 64, enumBiome["Steep Cliff"]);
+    console.log(target - 64, index - 64);
+  })
 }
